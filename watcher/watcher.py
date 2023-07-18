@@ -31,19 +31,19 @@ class Watcher:
         status_info = self.client.get_status().json()
         if status_info["status"]["indicator"] != "none":
             unresolved = self.client.get_unresolved_incidents().json()
-            if len(unresolved["incidents"]) >= 1:
+            if len(unresolved["incidents"]) >= 1 and self.incident_registry.list() is None:
                 incident_list = unresolved["incidents"]
-                component_name = incident_list[0]["components"][0]["name"]
-                if self.incident_registry.get(component_name) is None:
-                    self.incident_registry.add(
-                        Incident(
-                            component=component_name,
-                            description=incident_list[0]["name"],
-                            status=incident_list[0]["status"],
-                            impact=incident_list[0]["impact"],
-                            timestamp=time.time(),
-                            notified=False
-                        ))
+                component_names = [component["name"] for component in incident_list[0]["components"]]
+                self.incident_registry.add(
+                    Incident(
+                        components=component_names,
+                        description=incident_list[0]["name"],
+                        status=incident_list[0]["status"],
+                        impact=incident_list[0]["impact"],
+                        site_url=self.config.site_url,
+                        timestamp=time.time(),
+                        notified=False
+                    ))
         else:
             if self.incident_registry.list():
                 self.teamsbot.send_message(message=MessageFormatter.all_resolved())

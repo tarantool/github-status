@@ -8,18 +8,20 @@ class TestMessageFormatter:
 
     def test_incident(self):
         incident = Incident(
-            component="test_component",
+            components=["test_component", "test_component2"],
             description="test_description",
             impact="test_impact",
             status="test_status",
+            site_url="test_site",
             timestamp=time.time(),
             notified=False
         )
         expected = "🔴 New incident\n" \
-                   "<b>Component:</b> test_component\n" \
+                   "<b>Components:</b> test_component, test_component2\n" \
                    "<b>Description:</b> test_description\n" \
                    "<b>Status:</b> test_status\n" \
-                   "<b>Impact:</b> test_impact\n"
+                   "<b>Impact:</b> test_impact\n" \
+                   "<b>URL:</b> test_site\n"
 
         assert MessageFormatter().incident(incident) == expected
 

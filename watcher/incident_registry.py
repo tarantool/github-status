@@ -4,10 +4,11 @@ from typing import Optional, Any
 
 @dataclass
 class Incident:
-    component: str
+    components: [str]
     description: str
     impact: str
     status: str
+    site_url: str
     timestamp: float
     notified: bool
 
@@ -28,12 +29,6 @@ class IncidentRegistry:
 
     def clear(self):
         self.registry.clear()
-
-    def get(self, component_name: str) -> Optional[Incident]:
-        for incident in self.registry:
-            if incident.component == component_name:
-                return incident
-        return None
 
     def update(self, component_name: str, field: str, value: Optional[Any]):
         for incident in self.registry:
