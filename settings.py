@@ -23,6 +23,7 @@ class Config:
     notification_delay: int
     bot_api_url: str
     github_api_url: str
+    site_url: str
 
     def __init__(self):
         self.retry_request_delay = int(os.environ.get("RETRY_REQUEST_DELAY", "5"))
@@ -30,6 +31,7 @@ class Config:
         self.notification_delay = int(os.environ.get("NOTIFICATION_DELAY", "120"))
         self.bot_api_url = os.environ.get("BOT_API_URL", "https://api.internal.myteam.mail.ru/bot/v1")
         self.github_api_url = os.environ.get("GITHUB_API_URL", "https://www.githubstatus.com/api/v2")
+        self.site_url = os.environ.get("SITE_URL", "www.githubstatus.com")
 
     def load_required(self):
         _chat_id = os.environ.get("CHAT_ID")
