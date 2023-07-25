@@ -1,0 +1,48 @@
+name: github-status
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04-self-hosted
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ '3.8', '3.9', '3.10' ]
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          submodules: recursive
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Display python version
+        run: python -c "import sys; print(sys.version)"
+
+      - name: Setup python dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-test.txt
+
+      - name: Run flake8
+        run: |
+          flake8
+
+      - name: Run unit testing
+        run: |
+          python -m pytest -v test/
+
+      - name: Start service
+        run: | 
+          python main.py
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
